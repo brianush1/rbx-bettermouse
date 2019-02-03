@@ -30,13 +30,16 @@ local function mouseEvents(item, button, events)
 			
 			local pos = item.AbsolutePosition
 			local size = item.AbsoluteSize
-			if events.Leave and (
-				x < pos.X
-				or y < pos.Y
-				or x >= (pos.X + size.X)
-				or y >= (pos.Y + size.Y)) then
-				entered = false
-				events.Leave()
+			if (x < pos.X
+					or y < pos.Y
+					or x >= (pos.X + size.X)
+					or y >= (pos.Y + size.Y)) then
+				if events.Leave then
+					entered = false
+					events.Leave()
+				end
+			else
+				if events.Click then events.Click() end
 			end
 		end)
 		
