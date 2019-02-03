@@ -4,7 +4,7 @@ A simple module for much better mouse events on Roblox
 ## Usage
 In your script, call `initMouseOverlay(screenGui)`. Then, use the `mouseEvents` function as such:
 ```lua
-function mouseEvents(item: GuiObject, button: 1 | 2, events: { Enter?, Up?, Down?, Leave?, Move? })
+function mouseEvents(item: GuiObject, button: 1 | 2, events: { Enter?, Up?, Down?, Leave?, Move?, Click? })
 ```
 
 ## Improvements over regular Roblox events
