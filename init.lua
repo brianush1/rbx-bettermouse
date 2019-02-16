@@ -14,7 +14,8 @@ local function mouseEvents(item, button, events)
 	local entered = false
 	local isDown = false
 	
-	item["MouseButton" .. button .. "Down"]:Connect(function()
+	local lastClick = 0
+	item["MouseButton" .. button .. "Down"]:Connect(function(x, y)
 		mouseOverlay.Visible = true
 		isDown = true
 		
@@ -26,7 +27,7 @@ local function mouseEvents(item, button, events)
 			moveConnection = nil
 			isDown = false
 			
-			if events.Up then events.Up() end
+			if events.Up then events.Up(x, y) end
 			
 			local pos = item.AbsolutePosition
 			local size = item.AbsoluteSize
@@ -36,30 +37,49 @@ local function mouseEvents(item, button, events)
 					or y >= (pos.Y + size.Y)) then
 				if events.Leave then
 					entered = false
-					events.Leave()
+					events.Leave(x, y)
 				end
 			else
-				if events.Click then events.Click() end
+				if events.Click then events.Click(x, y) end
+				if tick() - lastClick <= 0.3 then
+					if events.DoubleClick then events.DoubleClick(x, y) end
+				end
+				lastClick = tick()
 			end
 		end)
 		
-		moveConnection = mouseOverlay.MouseMoved:Connect(function()
-			if events.Move then events.Move() end
+		moveConnection = mouseOverlay.MouseMoved:Connect(function(x, y)
+			if events.Move then events.Move(x, y) end
 		end)
 		
-		if events.Down then events.Down() end
+		if events.Down then events.Down(x, y) end
 	end)
 	
-	item["MouseEnter"]:Connect(function()
+	item.MouseEnter:Connect(function(x, y)
 		if entered or isDown then return end
+		if y == item.AbsolutePosition.Y + item.AbsoluteSize.Y then return end
 		entered = true
-		if events.Enter then events.Enter() end
+		if events.Enter then events.Enter(x, y) end
 	end)
 	
-	item["MouseLeave"]:Connect(function()
+	item.MouseMoved:Connect(function(x, y)
+		if isDown then return end
+		if y == item.AbsolutePosition.Y + item.AbsoluteSize.Y then
+			if events.Leave and entered then
+				events.Leave(x, y)
+			end
+			entered = false
+		else
+			if entered then return end
+			entered = true
+			if events.Enter then events.Enter(x, y) end
+		end
+	end)
+	
+	item.MouseLeave:Connect(function(x, y)
 		if isDown then return end
 		if events.Leave and entered then
-			events.Leave()
+			events.Leave(x, y)
 		end
 		entered = false
 	end)
