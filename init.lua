@@ -126,7 +126,13 @@ local function mouseEvents(item, button, events)
 	end)
 end
 
+local eventCache = {}
+
 local function getEvents(item)
+	if eventCache[item] then
+		return eventCache[item]
+	end
+	
 	local result = {
 		MouseButton1Click = Signal(),
 		MouseButton1DoubleClick = Signal(),
@@ -165,6 +171,7 @@ local function getEvents(item)
 		end
 	})
 	
+	eventCache[item] = result
 	return result
 end
 
