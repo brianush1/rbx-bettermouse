@@ -57,10 +57,12 @@ local function mouseEvents(item, button, events)
 	
 	local lastClick = 0
 	item["MouseButton" .. button .. "Down"]:Connect(function(x, y)
+		y = y - 36
 		mouseOverlay.Visible = true
 		isDown = true
 		
 		upConnection = mouseOverlay["MouseButton" .. button .. "Up"]:Connect(function(x, y)
+			y = y - 36
 			mouseOverlay.Visible = false
 			upConnection:Disconnect()
 			moveConnection:Disconnect()
@@ -90,6 +92,7 @@ local function mouseEvents(item, button, events)
 		end)
 		
 		moveConnection = mouseOverlay.MouseMoved:Connect(function(x, y)
+			y = y - 36
 			if events.Move then events.Move(x, y) end
 		end)
 		
@@ -97,6 +100,7 @@ local function mouseEvents(item, button, events)
 	end)
 	
 	item.MouseEnter:Connect(function(x, y)
+		y = y - 36
 		if entered or isDown then return end
 		if y == item.AbsolutePosition.Y + item.AbsoluteSize.Y then return end
 		entered = true
@@ -104,6 +108,7 @@ local function mouseEvents(item, button, events)
 	end)
 	
 	item.MouseMoved:Connect(function(x, y)
+		y = y - 36
 		if isDown then return end
 		if y == item.AbsolutePosition.Y + item.AbsoluteSize.Y then
 			if events.Leave and entered then
@@ -118,6 +123,7 @@ local function mouseEvents(item, button, events)
 	end)
 	
 	item.MouseLeave:Connect(function(x, y)
+		y = y - 36
 		if isDown then return end
 		if events.Leave and entered then
 			events.Leave(x, y)
